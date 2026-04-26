@@ -25,7 +25,8 @@ block_blast/
     ├── hand_render.py   # OpenCV mask analysis: screenshot → piece list
     ├── state_OCR.py     # Orchestrates capture → board + hand → state.json
     ├── game.py          # Pygame hint overlay (draws ghost + best-move label)
-    └── ai.py            # Same AI agent, reads state.json produced by OCR
+    ├── ai.py            # Same AI agent, reads state.json produced by OCR
+    └── weights.json     # Best weights found by the genetic trainer (copy from block_bast after training)
 ```
 
 ---
@@ -104,6 +105,7 @@ The OCR folder contains an alternative front-end for players who want AI hints w
 3. **`hand_render.py`** — takes a screenshot of the hand region, subtracts the background colour (`#395194`) to isolate block pixels, divides the strip into three equal slots, and reconstructs the cell coordinates of each piece.
 4. **`state_OCR.py`** — orchestrates the two steps above and writes a `state.json` in the same format the AI agent expects.
 5. **`game.py`** — a lightweight Pygame overlay that displays the best move (green ghost on the board + slot label) in a separate window on top of the game, updated at ~10 fps.
+6. **`weights.json`** — the best set of evaluation weights discovered by the genetic trainer during training runs in `block_bast/`. Rather than starting the OCR agent from scratch, this file is copied over from `block_bast/best_weights.json` after a sufficient number of training generations, so the hint overlay immediately benefits from the fully evolved AI without requiring any additional training.
 
 ---
 
