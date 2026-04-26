@@ -147,7 +147,6 @@ pip install pygame opencv-python mss numpy
 ```bash
 cd block_bast
 python main.py          # opens the game window
-python ai.py            # in a second terminal — starts the AI agent
 ```
 
 Type `on` in the AI terminal to let the agent play. Type `off` to pause it and take over manually. Press `R` in the game window to restart at any time.
@@ -156,9 +155,7 @@ Type `on` in the AI terminal to let the agent play. Type `off` to pause it and t
 
 ```bash
 cd OCR
-python screen.py        # first run only — select board and hand regions
-python game.py          # starts the hint overlay window
-python ai.py            # in a second terminal — starts the AI agent
+python game.py          # select board and hand regions, starts the hint overlay window
 ```
 
 ---
