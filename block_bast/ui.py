@@ -27,9 +27,10 @@ HAND_Y = BOARD_Y + BOARD_H + 20
 HAND_X = PADDING
 HAND_W = WIN_W - 2 * PADDING
 
-STATE_PATH = "state.json"
-ACTION_PATH = "action.json"
-RESTART_PATH = "restart.json"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+STATE_PATH   = os.path.join(_HERE, "state.json")
+ACTION_PATH  = os.path.join(_HERE, "action.json")
+RESTART_PATH = os.path.join(_HERE, "restart.json")
 
 
 def cell_rect(gx: int, gy: int) -> pygame.Rect:
