@@ -1,0 +1,9 @@
+state.json
+action.json
+restart.json
+stats.json
+population.json
+best_weights.json
+*.png
+screenshot_regions.json
+__pycache__
