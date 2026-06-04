@@ -4,12 +4,12 @@ import sys
 import time
 import threading
 
-
-_HERE       = os.path.dirname(os.path.abspath(__file__))
-_ROOT       = os.path.dirname(_HERE)
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_ROOT = os.path.dirname(_HERE)
 sys.path.insert(0, _ROOT)
 
 from shared.ai_core import (
+    choose_best_move_2ply,
     FALLBACK_WEIGHTS,
     load_weights,
     load_state,
@@ -18,29 +18,24 @@ from shared.ai_core import (
 import ai_trainer
 
 
-
 _SHARED_DIR = os.path.join(_ROOT, "shared")
 
-
-WEIGHTS_PATH = os.path.join(_SHARED_DIR, "weights.json")
-
+SHARED_WEIGHTS_PATH = os.path.join(_SHARED_DIR, "weights.json")  
+LOCAL_WEIGHTS_PATH  = os.path.join(_HERE,        "weights.json")   
 
 STATE_PATH   = os.path.join(_HERE, "state.json")
 ACTION_PATH  = os.path.join(_HERE, "action.json")
 RESTART_PATH = os.path.join(_HERE, "restart.json")
-GENERIC_PATH = os.path.join(_HERE, "stats.json")
-
+STATS_PATH   = os.path.join(_HERE, "stats.json")
 
 POLL_DELAY_SEC    = 0.05
 MOVE_COOLDOWN_SEC = 0.02
 
-
-GAMES_PER_GENERATION = ai_trainer.POPULATION_SIZE
+GAMES_PER_INDIVIDUAL = ai_trainer.POPULATION_SIZE   # ігор на одного індивіда
 
 
 
 def write_action(slot: int, gx: int, gy: int, move_id: int) -> None:
-    """Writes the chosen move to action.json atomically (temp-file + rename)."""
     payload  = {"move_id": move_id, "slot": slot, "gx": gx, "gy": gy}
     tmp_path = ACTION_PATH + ".tmp"
 
@@ -67,7 +62,6 @@ def write_action(slot: int, gx: int, gy: int, move_id: int) -> None:
 
 
 class Toggle:
-    """Thread-safe on/off switch for the AI loop."""
 
     def __init__(self) -> None:
         self._enabled = False
@@ -84,7 +78,7 @@ class Toggle:
 
 def console_thread(toggle: Toggle) -> None:
     """Runs in a daemon thread; lets the user type on/off/quit."""
-    print("🤖 AI Control:  on | off | quit")
+    print("AI Control:  on | off | quit")
     while True:
         cmd = input("> ").strip().lower()
         if cmd == "on":
@@ -98,19 +92,15 @@ def console_thread(toggle: Toggle) -> None:
             print("👋 Exiting...")
             os._exit(0)
         else:
-            print("❌ Commands: on / off / quit")
+            print("Commands: on / off / quit")
+
 
 
 def main() -> None:
-    """AI + trainer loop.
-
-    Plays GAMES_PER_GENERATION games, then calls ai_trainer.train() to evolve
-    the weights, reloads them, and starts the next generation.
-    """
     toggle = Toggle()
 
     try:
-        with open(GENERIC_PATH, "r", encoding="utf-8") as f:
+        with open(STATS_PATH, "r", encoding="utf-8") as f:
             stats = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         stats = {}
@@ -123,8 +113,9 @@ def main() -> None:
     max_combo  = 0
     max_score  = 0
 
-    weights = load_weights(WEIGHTS_PATH, FALLBACK_WEIGHTS)
-    print("🎮 AI started! Type 'on' to begin.")
+    weights = load_weights(SHARED_WEIGHTS_PATH, FALLBACK_WEIGHTS)
+    print(f"Loaded seed weights from shared/weights.json")
+    print("AI started! Type 'on' to begin.")
 
     while True:
         if not toggle.get():
@@ -141,27 +132,39 @@ def main() -> None:
                 "Score":     max_score,
                 "Max_Combo": max_combo,
             }
-            with open(GENERIC_PATH, "w", encoding="utf-8") as f:
+            with open(STATS_PATH, "w", encoding="utf-8") as f:
                 json.dump(stats, f, ensure_ascii=False, indent=2)
+
+            print(
+                f"  Game {game:>2} over — "
+                f"moves={move_id}  score={max_score}  combo={max_combo}"
+            )
 
             game     += 1
             move_id   = 0
             max_combo = 0
             max_score = 0
 
-            # ── End of generation → run trainer ──────────────────────────────
-            if game > GAMES_PER_GENERATION:
-                print(f"\n🧬 Generation {generation} complete — running trainer...")
+            if game > GAMES_PER_INDIVIDUAL:
+                print(f"\nGeneration {generation} — evaluating individual...")
                 ai_trainer.train()
 
-                generation += 1
-                game        = 1
-                stats       = {}
+                import json as _json
+                try:
+                    with open(ai_trainer.CURRENT_INDEX_FILE) as cf:
+                        idx = _json.load(cf)
+                except Exception:
+                    idx = 0
 
-                weights = load_weights(WEIGHTS_PATH, FALLBACK_WEIGHTS)
-                print(f"🔄 Generation {generation} started with new weights.\n")
+                if idx == 0:
+                    generation += 1
+                    print(f"🔄 New generation {generation} started.\n")
 
-            # Signal ui.py to restart the game
+                weights = load_weights(LOCAL_WEIGHTS_PATH, FALLBACK_WEIGHTS)
+
+                game  = 1
+                stats = {}
+
             with open(RESTART_PATH, "w", encoding="utf-8") as f:
                 json.dump({"restart": True}, f, ensure_ascii=False, indent=2)
 
@@ -170,7 +173,7 @@ def main() -> None:
         max_combo = max(max_combo, state.combo)
         max_score = max(max_score, state.score)
 
-        best = choose_best_move(state, weights)
+        best = choose_best_move_2ply(state, weights)
         if best is None:
             continue
 

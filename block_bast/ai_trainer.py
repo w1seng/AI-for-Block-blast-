@@ -131,7 +131,7 @@ def train():
         best_fitness = best_local.get('f', 0) if isinstance(best_local, dict) else 0
 
         if population[0]['f'] > best_fitness:
-            print(f"  🎉 New record! Fitness: {population[0]['f']:.2f} (was {best_fitness:.2f})")
+            print(f"New record! Fitness: {population[0]['f']:.2f} (was {best_fitness:.2f})")
             best_entry = {'w': population[0]['w'], 'f': population[0]['f']}
             save_json(BEST_FILE, best_entry)             # локальний бекап
             save_json(SHARED_WEIGHTS_PATH, population[0]['w'])  # ← в shared!
