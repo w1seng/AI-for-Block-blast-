@@ -5,20 +5,20 @@ from typing import Dict, List, Optional, Tuple
 
 
 FALLBACK_WEIGHTS: Dict[str, float] = {
-    "holes":              -8.0,
-    "max_height":         -3.0,
-    "avg_height":         -1.0,
-    "filled":             -0.3,
-    "edge_penalty":       -2.0,
-    "cluster_score":       4.0,
-    "row_almost_full":    15.0,
-    "col_almost_full":    15.0,
-    "empty_rows":          5.0,
-    "combo_preservation": 50.0,
-    "piece_fit":           8.0,
-    "diversity":           3.0,
-    "cleared_lines":     100.0,
-    "immediate_gain":      1.0,
+    "holes":              0,
+    "max_height":         0,
+    "avg_height":         0,
+    "filled":             0,
+    "edge_penalty":       0,
+    "cluster_score":      0,
+    "row_almost_full":    0,
+    "col_almost_full":    0,
+    "empty_rows":          0,
+    "combo_preservation": 20,
+    "piece_fit":           0,
+    "diversity":           0,
+    "cleared_lines":     50.0,
+    "immediate_gain":      0,
 }
 
 
