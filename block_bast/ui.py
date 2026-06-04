@@ -1,10 +1,15 @@
 import os
 import json
+import sys
 import pygame
 from dataclasses import dataclass
 from typing import List, Tuple, Optional
 
-from config import (
+_HERE       = os.path.dirname(os.path.abspath(__file__))
+_ROOT       = os.path.dirname(_HERE)
+sys.path.insert(0, _ROOT)
+
+from shared.config import (
     BOARD_SIZE, CELL, CELL_HAND, GAP_BOARD, GAP_HAND,
     PADDING, TOP_BAR, HAND_HEIGHT, EXTRA_W, EXTRA_H,
     BG, GRID_BG, LINE, BLOCK, GHOST_OK, GHOST_BAD, TEXT, SUBTEXT

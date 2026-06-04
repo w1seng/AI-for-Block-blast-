@@ -8,37 +8,21 @@ from dataclasses import dataclass
 import screen
 import pygame
 
+_HERE       = os.path.dirname(os.path.abspath(__file__))
+_ROOT       = os.path.dirname(_HERE)
+sys.path.insert(0, _ROOT)
+
 try:
     from state_OCR import save_game_state as _capture_state
 except ImportError:
     _capture_state = None
 
-try:
-    from config import (
+
+from shared.config import (
         BOARD_SIZE, CELL, CELL_HAND, GAP_BOARD, GAP_HAND,
         PADDING, TOP_BAR, HAND_HEIGHT, EXTRA_W, EXTRA_H,
         BG, GRID_BG, LINE, BLOCK, GHOST_OK, GHOST_BAD, TEXT, SUBTEXT,
-    )
-except ImportError:
-    BOARD_SIZE  = 8
-    CELL        = 60
-    CELL_HAND   = 36
-    GAP_BOARD   = 4
-    GAP_HAND    = 3
-    PADDING     = 20
-    TOP_BAR     = 50
-    HAND_HEIGHT = 160
-    EXTRA_W     = 0
-    EXTRA_H     = 20
-    BG          = (15,  17,  26)
-    GRID_BG     = (22,  26,  40)
-    LINE        = (40,  46,  72)
-    BLOCK       = (72,  90, 160)
-    GHOST_OK    = (60, 210, 120)
-    GHOST_BAD   = (210, 60,  60)
-    TEXT        = (230, 232, 242)
-    SUBTEXT     = (120, 130, 160)
-
+)
 BOARD_W = BOARD_SIZE * CELL
 BOARD_H = BOARD_SIZE * CELL
 WIN_W   = PADDING * 2 + BOARD_W + EXTRA_W
