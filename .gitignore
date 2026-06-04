@@ -4,6 +4,8 @@ restart.json
 stats.json
 population.json
 best_weights.json
+current_index.json
+training_log.json
 *.png
 screenshot_regions.json
 __pycache__
