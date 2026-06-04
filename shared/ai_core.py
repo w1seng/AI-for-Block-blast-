@@ -385,3 +385,48 @@ def choose_best_move(
             best_move  = (piece.slot, gx, gy)
 
     return best_move
+
+
+def choose_best_move_2ply(
+    state: GameState, weights: Dict[str, float]
+) -> Optional[Tuple[int, int, int]]:
+    pieces = [p for p in state.hand if p is not None]
+    if not pieces:
+        return None
+
+    best_first_move  = None
+    best_combined    = -1e18
+
+    for piece1, gx1, gy1 in find_all_legal_moves(state):
+        sim1 = simulate_move(state, piece1, gx1, gy1)
+        if sim1 is None:
+            continue
+
+        score1 = evaluate_move(sim1, state, weights)
+
+        state_after = GameState(
+            grid=sim1.grid,
+            hand=[p for p in state.hand if p is not None and p.slot != piece1.slot],
+            combo=state.combo + (1 if sim1.cleared_lines > 0 else 0),
+            combo_active=(sim1.cleared_lines > 0),
+            score=state.score + sim1.score_gain,
+            size=state.size,
+        )
+
+        # Шукаємо кращий другий хід
+        best_score2 = 0.0
+        for piece2, gx2, gy2 in find_all_legal_moves(state_after):
+            sim2 = simulate_move(state_after, piece2, gx2, gy2)
+            if sim2 is None:
+                continue
+            s2 = evaluate_move(sim2, state_after, weights)
+            if s2 > best_score2:
+                best_score2 = s2
+
+        combined = score1 + 0.5 * best_score2
+
+        if combined > best_combined:
+            best_combined   = combined
+            best_first_move = (piece1.slot, gx1, gy1)
+
+    return best_first_move
