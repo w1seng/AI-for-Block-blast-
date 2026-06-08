@@ -8,7 +8,7 @@
 
 ### Simulation — AI agent playing the built-in Pygame game
 
-(./assets/game.gif)
+![AI agent playing Block Blast simulation](./assets/game.gif)
 
 ---
 
