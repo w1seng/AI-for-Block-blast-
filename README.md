@@ -14,9 +14,7 @@
 
 ### OCR Overlay — AI hints on a live game window
 
-<!-- 📌 GIF PLACEHOLDER — OCR overlay -->
-<!-- Replace the line below with your actual GIF -->
-![OCR overlay showing best-move hints on a real game](./assets/demo_ocr.gif)
+![OCR overlay showing best-move hints on a real game](./assets/game_OCR.gif)
 
 ---
 

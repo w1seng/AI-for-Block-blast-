@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import screen
 import pygame
 
+
 _HERE       = os.path.dirname(os.path.abspath(__file__))
 _ROOT       = os.path.dirname(_HERE)
 sys.path.insert(0, _ROOT)
@@ -34,11 +35,14 @@ HAND_X  = PADDING
 HAND_W  = WIN_W - 2 * PADDING
 
 STATE_PATH   = "state.json"
-WEIGHTS_PATH = "weights.json"
+
+_SHARED_DIR  = os.path.join(_ROOT, "shared")
+WEIGHTS_PATH = os.path.join(_SHARED_DIR, "weights.json")
 
 HINT_BORDER  = (*GHOST_OK, 220)
 CLEAR_LINE   = (*GHOST_OK, 55)
 
+from shared.ai_core import Piece as _Piece, GameState as _GameState
 
 @dataclass
 class AIPiece:

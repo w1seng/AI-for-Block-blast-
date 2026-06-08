@@ -13,6 +13,8 @@ from shared.ai_core import (
     load_weights,
     load_state,
     choose_best_move,
+    Piece,
+    GameState,
 )
 
 
